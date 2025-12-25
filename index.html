@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Compliance-Ready Cloud Dev Environments</title>
+  <meta name="description" content="Onboard engineers in minutes. Audit-ready. No DevOps required." />
+  <style>
+    :root{
+      --bg:#0b1020; --card:#0f1733; --text:#e9eefc; --muted:#a9b4d6;
+      --line:rgba(255,255,255,.12); --btn:#ffffff; --btnText:#0b1020;
+      --accent:#7aa2ff;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 600px at 30% -10%, rgba(122,162,255,.35), transparent 60%),
+                  radial-gradient(900px 500px at 80% 10%, rgba(122,255,210,.18), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit}
+    .wrap{max-width:980px; margin:0 auto; padding:40px 18px 70px}
+    .top{display:flex; gap:14px; align-items:center; justify-content:space-between; margin-bottom:26px;}
+    .brand{font-weight:700; letter-spacing:.2px}
+    .pill{font-size:12px; color:var(--muted); border:1px solid var(--line); padding:8px 10px; border-radius:999px;}
+    .hero{border:1px solid var(--line); background:rgba(15,23,51,.75); border-radius:var(--radius); padding:28px;}
+    h1{margin:0 0 10px; font-size:34px; line-height:1.1}
+    .sub{margin:0 0 18px; color:var(--muted); font-size:16px}
+    .ctaRow{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 14px; border-radius:12px; border:1px solid var(--line);
+      text-decoration:none; font-weight:650;
+    }
+    .btn.primary{background:var(--btn); color:var(--btnText); border-color:transparent}
+    .btn.secondary{background:transparent}
+    .grid{display:grid; gap:14px; margin-top:14px; grid-template-columns: repeat(12, 1fr);}
+    .card{
+      grid-column: span 6;
+      border:1px solid var(--line); background:rgba(15,23,51,.65);
+      border-radius:var(--radius); padding:18px;
+    }
+    .card h2{margin:0 0 10px; font-size:14px; letter-spacing:.4px; text-transform:uppercase; color:#cfd7f5}
+    ul{margin:0; padding-left:18px; color:var(--muted)}
+    li{margin:8px 0}
+    .formCard{
+      grid-column: span 12;
+      border:1px solid rgba(122,162,255,.35);
+      background: linear-gradient(180deg, rgba(122,162,255,.12), rgba(15,23,51,.65));
+      border-radius:var(--radius); padding:18px;
+    }
+    .formTitle{margin:0 0 10px; font-size:18px}
+    form{display:grid; gap:10px; grid-template-columns: repeat(12, 1fr); margin-top:10px}
+    label{font-size:12px; color:#cfd7f5; display:block; margin-bottom:6px}
+    input, select{
+      width:100%; padding:12px 12px; border-radius:12px;
+      border:1px solid var(--line); background:rgba(11,16,32,.55); color:var(--text);
+      outline:none;
+    }
+    input::placeholder{color:rgba(233,238,252,.55)}
+    .col6{grid-column: span 6}
+    .col12{grid-column: span 12}
+    .hint{font-size:12px; color:var(--muted); margin-top:8px}
+    .footer{
+      margin-top:18px; color:var(--muted); font-size:12px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    }
+    @media (max-width:720px){
+      .card{grid-column: span 12}
+      .col6{grid-column: span 12}
+      h1{font-size:28px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">CDE for Regulated Teams</div>
+      <div class="pill">Audit-ready • No DevOps required</div>
+    </div>
+
+    <section class="hero">
+      <h1>Compliance-Ready Cloud Dev Environments</h1>
+      <p class="sub">Onboard engineers in minutes. Audit-ready. No DevOps required.</p>
+
+      <div class="ctaRow">
+        <a class="btn primary" href="#form">Request Security Pack</a>
+        <a class="btn secondary" href="https://calendly.com/achahboune/new-meeting" target="_blank" rel="noopener">Book a 15-min Call</a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Problem</h2>
+        <ul>
+          <li>“Works on my machine” slows delivery</li>
+          <li>Onboarding takes days</li>
+          <li>Dev/prod parity breaks on secrets, IAM, and auth</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Solution</h2>
+        <ul>
+          <li>SSO/SAML (Okta / Azure AD)</li>
+          <li>RBAC + Audit logs</li>
+          <li>Data residency + egress controls</li>
+          <li>VPC / private networking option</li>
+          <li>Prebuilt workspaces from devcontainer</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Who it’s for</h2>
+        <ul>
+          <li>Healthcare / Fintech / Gov contractors</li>
+          <li>Teams blocked from Codespaces/Gitpod due to compliance</li>
+          <li>Teams that can’t afford Coder’s self-hosted complexity</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>What you get (Pilot)</h2>
+        <ul>
+          <li>1–2 reference workspaces</li>
+          <li>Security + compliance mapping pack</li>
+          <li>Cost controls + auto-shutdown policies</li>
+          <li>Onboarding workflow (new hire → first commit)</li>
+        </ul>
+      </div>
+
+      <div class="formCard" id="form">
+        <h3 class="formTitle">Get the Security Pack + Pilot Plan</h3>
+
+        <form method="POST" action="https://formspree.io/f/xeeqjzrn">
+          <div class="col6">
+            <label>Work email</label>
+            <input name="work_email" type="email" placeholder="name@company.com" required />
+          </div>
+
+          <div class="col6">
+            <label>Company</label>
+            <input name="company" type="text" placeholder="Company name" required />
+          </div>
+
+          <div class="col6">
+            <label>Industry</label>
+            <select name="industry" required>
+              <option value="" disabled selected>Select</option>
+              <option>Healthcare</option>
+              <option>Fintech</option>
+              <option>Gov</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="col6">
+            <label>Compliance</label>
+            <select name="compliance" required>
+              <option value="" disabled selected>Select</option>
+              <option>HIPAA</option>
+              <option>FedRAMP</option>
+              <option>SOC2</option>
+              <option>PCI</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="col6">
+            <label>Team size</label>
+            <select name="team_size" required>
+              <option value="" disabled selected>Select</option>
+              <option>10–50</option>
+              <option>50–200</option>
+              <option>200+</option>
+            </select>
+          </div>
+
+          <div class="col6">
+            <label>Want a pilot?</label>
+            <select name="want_pilot" required>
+              <option value="" disabled selected>Select</option>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+          </div>
+
+          <input type="hidden" name="source" value="landing-vercel" />
+          <input type="hidden" name="page" value="compliance-cde" />
+
+          <div class="col12">
+            <button class="btn primary" type="submit">Send</button>
+            <div class="hint">We’ll reply within 24 hours.</div>
+          </div>
+        </form>
+
+        <div class="footer">
+          <span>Privacy: we only use your info to respond to this request.</span>
+          <span>© 2025</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
