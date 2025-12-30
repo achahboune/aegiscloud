@@ -133,6 +133,16 @@
   padding:14px;
   color:var(--text);
 }
+.modal{
+  width:min(980px, 96vw);
+  max-height:92vh;
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:rgba(15,23,51,.98);
+  padding:28px;
+}
+
 
   </style>
 </head>
@@ -272,12 +282,11 @@
 </div>
 
 
-<div id="packError" style="display:none; margin-top:14px;">
+<div id="packError" style="display:none">
   <div class="errorBox">
-    Oups — envoi impossible. Réessaie ou contacte-nous par email.
+    Oops — something went wrong. Please try again.
   </div>
 </div>
-
 
       <div class="footer" style="border-top:1px solid rgba(255,255,255,.08); padding-top:14px; margin-top:14px;">
         <span>We only use your info to answer this request.</span>
