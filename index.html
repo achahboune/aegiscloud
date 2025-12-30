@@ -287,131 +287,97 @@
     </div>
   </div>
 
-  <script>
-  (function(){
-    const openBtn = document.getElementById('openPack');
-    const modal = document.getElementById('packModal');
-    const closeBtn = document.getElementById('closePack');
-
-    function openModal(){
-      if (!modal) return;
-      modal.classList.add('open');
-      document.body.classList.add('modalOpen');
-      modal.setAttribute('aria-hidden', 'false');
-      // focus first input for better UX
-      const first = modal.querySelector('input, select, textarea, button');
-      if (first) setTimeout(() => first.focus(), 0);
-    }
-
-    function closeModal(){
-      if (!modal) return;
-      modal.classList.remove('open');
-      document.body.classList.remove('modalOpen');
-      modal.setAttribute('aria-hidden', 'true');
-    }
-
-    openBtn && openBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      openModal();
-    });
-
-    closeBtn && closeBtn.addEventListener('click', closeModal);
-
-    modal && modal.addEventListener('click', function(e){
-      if (e.target === modal) closeModal();
-    });
-
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') closeModal();
-    });
-
-    // If user lands on /#form, open modal automatically
-    if (location.hash === '#form') {
-      openModal();
-      // remove hash so page doesn't "do nothing" on next click
-      history.replaceState(null, '', location.pathname + location.search);
-    }
-  })();
-const openBtn = document.getElementById('openPack');
+<script>
+(function () {
+  const openBtn = document.getElementById('openPack');
   const modal = document.getElementById('packModal');
   const closeBtn = document.getElementById('closePack');
 
-  function openModal(){
+  const form = modal ? modal.querySelector('form') : null;
+  const success = document.getElementById('packSuccess');
+  const errorBox = document.getElementById('packError');
+  const closeAfter = document.getElementById('closeAfterSuccess');
+
+  const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+  const submitOriginal = submitBtn ? submitBtn.textContent : 'Send';
+
+  function resetModalState() {
+    if (form) form.style.display = 'grid';
+    if (success) success.style.display = 'none';
+    if (errorBox) errorBox.style.display = 'none';
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitOriginal; }
+  }
+
+  function openModal() {
     if (!modal) return;
+    resetModalState();
     modal.classList.add('open');
     document.body.classList.add('modalOpen');
     modal.setAttribute('aria-hidden', 'false');
     const first = modal.querySelector('input, select, textarea, button');
     if (first) setTimeout(() => first.focus(), 0);
   }
-  function closeModal(){
+
+  function closeModal() {
     if (!modal) return;
     modal.classList.remove('open');
     document.body.classList.remove('modalOpen');
     modal.setAttribute('aria-hidden', 'true');
   }
 
-  openBtn && openBtn.addEventListener('click', function(e){
+  openBtn && openBtn.addEventListener('click', function (e) {
     e.preventDefault();
     openModal();
   });
 
   closeBtn && closeBtn.addEventListener('click', closeModal);
+  closeAfter && closeAfter.addEventListener('click', closeModal);
 
-  modal && modal.addEventListener('click', function(e){
+  modal && modal.addEventListener('click', function (e) {
     if (e.target === modal) closeModal();
   });
 
-  document.addEventListener('keydown', function(e){
+  document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeModal();
   });
 
-  // ---- NEW: AJAX submit + custom thank you ----
-  const form = modal ? modal.querySelector('form') : null;
-  const success = document.getElementById('packSuccess');
-  const errorBox = document.getElementById('packError');
-  const closeAfter = document.getElementById('closeAfterSuccess');
-
-  closeAfter && closeAfter.addEventListener('click', closeModal);
-
-  form && form.addEventListener('submit', async function(e){
+  // AJAX submit + custom thank you
+  form && form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    // reset states
     if (errorBox) errorBox.style.display = 'none';
     if (success) success.style.display = 'none';
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn ? submitBtn.textContent : '';
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
 
-    try{
+    try {
       const res = await fetch(form.action, {
         method: 'POST',
         body: new FormData(form),
         headers: { 'Accept': 'application/json' }
       });
 
-      if (res.ok){
+      if (res.ok) {
         form.reset();
         form.style.display = 'none';
         if (success) success.style.display = 'block';
       } else {
         if (errorBox) errorBox.style.display = 'block';
       }
-    } catch(err){
+    } catch (err) {
       if (errorBox) errorBox.style.display = 'block';
     } finally {
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalText; }
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitOriginal; }
     }
   });
 
-  // If user lands on /#form, open modal automatically
+  // /#form opens modal
   if (location.hash === '#form') {
     openModal();
     history.replaceState(null, '', location.pathname + location.search);
   }
 })();
-  </script>
+</script>
+
 </body>
 </html>
