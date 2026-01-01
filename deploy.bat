@@ -16,6 +16,31 @@ if not exist ".git" (
   goto done_err
 )
 
+REM --- Cloudflare Pages routing safety check
+if not exist "_routes.json" (
+  echo ERROR: "_routes.json" is missing. Cloudflare Pages Functions routing may break.
+  echo Fix: create _routes.json with:
+  echo   { "version": 1, "include": ["/api/*"], "exclude": [] }
+  goto done_err
+)
+
+if exist "_routes.js" (
+  echo ERROR: Found "_routes.js" but Cloudflare requires "_routes.json".
+  echo Fix: delete _routes.js and keep _routes.json.
+  goto done_err
+)
+
+if exist "_routes.json.js" (
+  echo ERROR: Found "_routes.json.js" but Cloudflare requires "_routes.json".
+  echo Fix: rename _routes.json.js to _routes.json.
+  goto done_err
+)
+
+REM --- Optional: check your lead function exists
+if not exist "functions\api\lead.js" (
+  echo WARNING: functions\api\lead.js not found. /api/lead will not work.
+)
+
 REM --- verify git is callable
 where git >nul 2>&1
 if errorlevel 1 (
