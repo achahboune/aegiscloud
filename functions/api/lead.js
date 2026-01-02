@@ -1,6 +1,6 @@
 export async function onRequestPost({ request, env }) {
   try {
-    // ---- Safety checks (clear error messages)
+    // ---- env checks
     if (!env.TURNSTILE_SECRET_KEY) {
       return json({ ok: false, error: "Server misconfig: TURNSTILE_SECRET_KEY missing" }, 500);
     }
@@ -11,7 +11,7 @@ export async function onRequestPost({ request, env }) {
     const ct = request.headers.get("content-type") || "";
     const data = {};
 
-    // Parse body robustly (FormData => multipart/form-data)
+    // Parse body robustly
     if (ct.includes("multipart/form-data")) {
       const fd = await request.formData();
       for (const [k, v] of fd.entries()) data[k] = String(v);
@@ -28,10 +28,8 @@ export async function onRequestPost({ request, env }) {
       for (const [k, v] of p.entries()) data[k] = v;
     }
 
-    // Turnstile token can be either:
-    // - "cf-turnstile-response" (default hidden input)
-    // - "turnstile" (if you send it manually)
-    const token = (data["cf-turnstile-response"] || data["turnstile"] || "").trim();
+    // Token: accepte "turnstile" (notre hidden) ou "cf-turnstile-response" (default CF)
+    const token = (data["turnstile"] || data["cf-turnstile-response"] || "").trim();
     if (!token) {
       return json({ ok: false, error: "Missing Turnstile token" }, 400);
     }
@@ -50,13 +48,10 @@ export async function onRequestPost({ request, env }) {
 
     const verify = await verifyRes.json();
     if (!verify.success) {
-      return json(
-        { ok: false, error: "Turnstile failed", details: verify },
-        403
-      );
+      return json({ ok: false, error: "Turnstile failed", details: verify }, 403);
     }
 
-    // Read fields
+    // Lead fields
     const work_email = (data.work_email || "").trim();
     const company = (data.company || "").trim();
     const compliance = (data.compliance || "").trim();
@@ -75,22 +70,20 @@ export async function onRequestPost({ request, env }) {
 🔗 Page: ${page || "-"}
 🕒 ${now}`;
 
-    // Send Telegram
+    // Telegram
     const tgRes = await fetch(`https://api.telegram.org/bot${env.TG_BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         chat_id: env.TG_CHAT_ID,
-        text: msg
+        text: msg,
+        disable_web_page_preview: true
       })
     });
 
     const tgJson = await tgRes.json();
     if (!tgRes.ok || !tgJson.ok) {
-      return json(
-        { ok: false, error: "Telegram failed", details: tgJson },
-        502
-      );
+      return json({ ok: false, error: "Telegram failed", details: tgJson }, 502);
     }
 
     return json({ ok: true });
