@@ -1,40 +1,33 @@
 export async function onRequestPost({ request, env }) {
   try {
-    // ---- env checks
+    // --- Sanity checks
     if (!env.TURNSTILE_SECRET_KEY) {
       return json({ ok: false, error: "Server misconfig: TURNSTILE_SECRET_KEY missing" }, 500);
     }
     if (!env.TG_BOT_TOKEN || !env.TG_CHAT_ID) {
-      return json({ ok: false, error: "Server misconfig: TG_BOT_TOKEN or TG_CHAT_ID missing" }, 500);
+      return json({ ok: false, error: "Server misconfig: TG_BOT_TOKEN / TG_CHAT_ID missing" }, 500);
     }
 
-    const ct = request.headers.get("content-type") || "";
-    const data = {};
+    const ct = (request.headers.get("content-type") || "").toLowerCase();
 
-    // Parse body robustly
+    // --- Parse fields (support multipart + urlencoded)
+    let get = (k) => "";
     if (ct.includes("multipart/form-data")) {
       const fd = await request.formData();
-      for (const [k, v] of fd.entries()) data[k] = String(v);
-    } else if (ct.includes("application/x-www-form-urlencoded")) {
-      const text = await request.text();
-      const p = new URLSearchParams(text);
-      for (const [k, v] of p.entries()) data[k] = v;
-    } else if (ct.includes("application/json")) {
-      const j = await request.json();
-      for (const k of Object.keys(j || {})) data[k] = String(j[k]);
+      get = (k) => String(fd.get(k) || "").trim();
     } else {
       const text = await request.text();
-      const p = new URLSearchParams(text);
-      for (const [k, v] of p.entries()) data[k] = v;
+      const params = new URLSearchParams(text);
+      get = (k) => String(params.get(k) || "").trim();
     }
 
-    // Token: accepte "turnstile" (notre hidden) ou "cf-turnstile-response" (default CF)
-    const token = (data["turnstile"] || data["cf-turnstile-response"] || "").trim();
+    // Turnstile token (standard field name)
+    const token = get("cf-turnstile-response") || get("turnstile");
     if (!token) {
       return json({ ok: false, error: "Missing Turnstile token" }, 400);
     }
 
-    // Verify Turnstile
+    // --- Verify Turnstile
     const ip = request.headers.get("CF-Connecting-IP") || "";
     const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
@@ -42,7 +35,7 @@ export async function onRequestPost({ request, env }) {
       body: new URLSearchParams({
         secret: env.TURNSTILE_SECRET_KEY,
         response: token,
-        ...(ip ? { remoteip: ip } : {})
+        remoteip: ip
       })
     });
 
@@ -51,13 +44,13 @@ export async function onRequestPost({ request, env }) {
       return json({ ok: false, error: "Turnstile failed", details: verify }, 403);
     }
 
-    // Lead fields
-    const work_email = (data.work_email || "").trim();
-    const company = (data.company || "").trim();
-    const compliance = (data.compliance || "").trim();
-    const pain = (data.pain || "").trim();
-    const source = (data.source || "").trim();
-    const page = (data.page || "").trim();
+    // --- Lead fields
+    const work_email = get("work_email");
+    const company = get("company");
+    const compliance = get("compliance");
+    const pain = get("pain");
+    const source = get("source");
+    const page = get("page");
 
     const now = new Date().toISOString();
     const msg =
@@ -70,7 +63,7 @@ export async function onRequestPost({ request, env }) {
 🔗 Page: ${page || "-"}
 🕒 ${now}`;
 
-    // Telegram
+    // --- Send Telegram
     const tgRes = await fetch(`https://api.telegram.org/bot${env.TG_BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: { "content-type": "application/json" },

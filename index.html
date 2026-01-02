@@ -11,6 +11,9 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <meta name="theme-color" content="#0b1020">
 
+  <!-- ✅ Put your PUBLIC Turnstile SITE KEY here (not secret) -->
+  <meta name="turnstile-sitekey" content="0x4AAAAAACKGWyHun_bp5vaW">
+
   <style>
     :root{
       --bg:#0b1020; --card:#0f1733; --text:#e9eefc; --muted:#a9b4d6;
@@ -45,6 +48,7 @@
       background:transparent;
     }
     .btn.primary{background:var(--btn); color:var(--btnText); border-color:transparent}
+    .btn[disabled]{opacity:.55; cursor:not-allowed}
 
     .grid{display:grid; gap:14px; margin-top:14px; grid-template-columns: repeat(12, 1fr);}
     .card{
@@ -111,7 +115,6 @@
     .col6{grid-column: span 6}
     .col12{grid-column: span 12}
     .hint{font-size:12px; color:var(--muted)}
-
     .successBox{
       border:1px solid rgba(122,255,210,.35);
       background:rgba(122,255,210,.10);
@@ -124,22 +127,21 @@
       border-radius:12px;
       padding:14px;
       color:var(--text);
-      white-space:pre-wrap;
-      word-break:break-word;
     }
 
+    /* Turnstile layout */
     .tsWrap{
-      display:flex;
-      align-items:center;
-      justify-content:flex-start;
-      min-height:76px;
-      margin-top:6px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      padding:12px;
+      background:rgba(11,16,32,.35);
+      display:inline-block;
+      min-height:74px; /* prevent jump */
     }
-
     .actionsRow{
       display:flex;
       align-items:center;
-      gap:14px;
+      gap:12px;
       margin-top:10px;
       flex-wrap:wrap;
     }
@@ -152,8 +154,8 @@
     }
   </style>
 
-  <!-- Turnstile (explicit render) -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad" async defer></script>
+  <!-- Turnstile API (explicit render) -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad&render=explicit" async defer></script>
 </head>
 
 <body>
@@ -220,7 +222,6 @@
 
   <div id="form" style="height:1px; width:1px; overflow:hidden;"></div>
 
-  <!-- Modal -->
   <div class="modalOverlay" id="packModal" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modalHead">
@@ -231,7 +232,7 @@
         <button class="modalClose" id="closePack" type="button">Close</button>
       </div>
 
-      <form id="leadForm" method="POST" action="/api/lead">
+      <form method="POST" action="/api/lead" id="leadForm">
         <div class="col6">
           <label>Work email</label>
           <input name="work_email" type="email" placeholder="name@company.com" required />
@@ -270,17 +271,16 @@
         <input type="hidden" name="source" value="landing-cloudflare" />
         <input type="hidden" name="page" value="aegis" />
 
-        <!-- token envoyé au backend -->
-        <input type="hidden" name="turnstile" id="turnstileToken" value="" />
+        <!-- IMPORTANT: server expects the standard name -->
+        <input type="hidden" name="cf-turnstile-response" id="tsToken" value="" />
 
         <div class="col12">
           <div class="tsWrap">
-            <!-- Turnstile sera rendu ici AU MOMENT où le modal s'ouvre -->
             <div id="turnstileBox"></div>
           </div>
 
           <div class="actionsRow">
-            <button class="btn primary" type="submit" id="submitBtn">Send</button>
+            <button class="btn primary" type="submit" id="submitBtn" disabled>Complete Turnstile…</button>
             <div class="hint">We’ll reply by email.</div>
           </div>
         </div>
@@ -290,7 +290,8 @@
         <div class="successBox">
           <h3 style="margin:0 0 6px;">Thanks — request received ✅</h3>
           <p style="margin:0; color:var(--muted);">
-            We’ll email you the <b>Security Pack</b> + the <b>Pilot Plan</b>. Please check spam too.
+            We’ll email you the <b>Security Pack</b> + the <b>Pilot Plan</b>.
+            Please check your spam folder as well.
           </p>
           <div style="margin-top:12px;">
             <button class="btn primary" type="button" id="closeAfterSuccess">Close</button>
@@ -299,7 +300,7 @@
       </div>
 
       <div id="packError" style="display:none">
-        <div class="errorBox" id="packErrorText">
+        <div class="errorBox" id="errorMsg">
           Oops — something went wrong. Please try again.
         </div>
       </div>
@@ -313,11 +314,6 @@
 
 <script>
 (function () {
-  // ====== CONFIG ======
-  // Mets ici TON vrai sitekey (TURNSTILE_SITE_KEY dans Cloudflare)
-  const TURNSTILE_SITE_KEY = "0x4AAAAAACKGWyHun_bp5vaW";
-
-  // ====== UI refs ======
   const openBtn = document.getElementById('openPack');
   const modal = document.getElementById('packModal');
   const closeBtn = document.getElementById('closePack');
@@ -325,161 +321,18 @@
   const form = document.getElementById('leadForm');
   const success = document.getElementById('packSuccess');
   const errorBox = document.getElementById('packError');
-  const errorText = document.getElementById('packErrorText');
+  const errorMsg = document.getElementById('errorMsg');
   const closeAfter = document.getElementById('closeAfterSuccess');
 
   const submitBtn = document.getElementById('submitBtn');
-  const submitOriginal = submitBtn ? submitBtn.textContent : 'Send';
+  const tsToken = document.getElementById('tsToken');
 
-  const tokenInput = document.getElementById('turnstileToken');
-  const tsBox = document.getElementById('turnstileBox');
-
-  // ====== Turnstile state ======
-  let tsWidgetId = null;
-  let tsLoaded = false;
+  let widgetId = null;
 
   function resetModalState() {
     if (form) form.style.display = 'grid';
     if (success) success.style.display = 'none';
     if (errorBox) errorBox.style.display = 'none';
-    if (errorText) errorText.textContent = "Oops — something went wrong. Please try again.";
-    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitOriginal; }
-    if (tokenInput) tokenInput.value = "";
-  }
-
-  function showError(msg) {
-    if (errorText) errorText.textContent = msg;
-    if (errorBox) errorBox.style.display = 'block';
-  }
-
-  function renderTurnstileIfNeeded() {
-    if (!tsLoaded) return;
-    if (!window.turnstile) return;
-    if (!tsBox) return;
-    if (tsWidgetId !== null) return;
-
-    tsWidgetId = window.turnstile.render(tsBox, {
-      sitekey: TURNSTILE_SITE_KEY,
-      theme: "dark",
-      callback: function (token) {
-        if (tokenInput) tokenInput.value = token || "";
-        if (errorBox) errorBox.style.display = 'none';
-      },
-      "expired-callback": function () {
-        if (tokenInput) tokenInput.value = "";
-      },
-      "error-callback": function () {
-        if (tokenInput) tokenInput.value = "";
-        showError("Turnstile error. Check that this hostname is allowed for your sitekey (Turnstile widget > Hostnames).");
-      }
-    });
-  }
-
-  // Called by Turnstile script onload=...
-  window.onTurnstileLoad = function () {
-    tsLoaded = true;
-    // si modal déjà ouvert
-    if (modal && modal.classList.contains('open')) renderTurnstileIfNeeded();
-  };
-
-  function openModal() {
-    if (!modal) return;
-    resetModalState();
-    modal.classList.add('open');
-    document.body.classList.add('modalOpen');
-    modal.setAttribute('aria-hidden', 'false');
-
-    // IMPORTANT: on rend Turnstile seulement quand c'est visible
-    setTimeout(renderTurnstileIfNeeded, 0);
-
-    const first = modal.querySelector('input, select, textarea, button');
-    if (first) setTimeout(() => first.focus(), 0);
-  }
-
-  function closeModal() {
-    if (!modal) return;
-    modal.classList.remove('open');
-    document.body.classList.remove('modalOpen');
-    modal.setAttribute('aria-hidden', 'true');
-  }
-
-  openBtn && openBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    openModal();
-  });
-
-  closeBtn && closeBtn.addEventListener('click', closeModal);
-  closeAfter && closeAfter.addEventListener('click', closeModal);
-
-  modal && modal.addEventListener('click', function (e) {
-    if (e.target === modal) closeModal();
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeModal();
-  });
-
-  // AJAX submit
-  form && form.addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    if (errorBox) errorBox.style.display = 'none';
-    if (success) success.style.display = 'none';
-
-    const token = tokenInput ? tokenInput.value : "";
-    if (!token) {
-      showError("Complete the anti-bot check (Turnstile) then try again.");
-      return;
-    }
-
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
-
-    try {
-      const res = await fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'Accept': 'application/json' }
-      });
-
-      const txt = await res.text();
-      let j = null;
-      try { j = JSON.parse(txt); } catch {}
-
-      if (res.ok && j && j.ok) {
-        form.reset();
-        form.style.display = 'none';
-        if (success) success.style.display = 'block';
-
-        if (tokenInput) tokenInput.value = "";
-        if (window.turnstile && tsWidgetId !== null) {
-          try { window.turnstile.reset(tsWidgetId); } catch {}
-        }
-      } else {
-        const details = (j && j.details) ? ("\n" + JSON.stringify(j.details)) : "";
-        showError((j && j.error) ? (j.error + details) : "Oops — server error. Please try again.");
-        if (tokenInput) tokenInput.value = "";
-        if (window.turnstile && tsWidgetId !== null) {
-          try { window.turnstile.reset(tsWidgetId); } catch {}
-        }
-      }
-    } catch (err) {
-      showError("Network error — please try again.");
-      if (tokenInput) tokenInput.value = "";
-      if (window.turnstile && tsWidgetId !== null) {
-        try { window.turnstile.reset(tsWidgetId); } catch {}
-      }
-    } finally {
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitOriginal; }
-    }
-  });
-
-  // /#form opens modal
-  if (location.hash === '#form') {
-    openModal();
-    history.replaceState(null, '', location.pathname + location.search);
-  }
-})();
-</script>
-
-</body>
-</html>
+    if (errorMsg) errorMsg.textContent = 'Oops — something went wrong. Please try again.';
+    if (tsToken) tsToken.value = '';
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'C
