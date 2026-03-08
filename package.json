@@ -1,0 +1,7 @@
+{
+  "name": "aegiscloud-landing",
+  "private": true,
+  "dependencies": {
+    "nodemailer": "^6.10.1"
+  }
+}
