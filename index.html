@@ -434,6 +434,9 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 0}
           method="POST"
           onsubmit="handleSubmit(event)"
         >
+<input type="hidden" name="access_key" value="adf0554d-1220-4aeb-a3d0-e67945f6afe4"/>
+          <input type="hidden" name="subject" value="AegisCloud — New Security Pack Request"/>
+          <input type="hidden" name="from_name" value="AegisCloud Website"/>
 <div class="fg"><label>Work email *</label><input type="email" name="email" placeholder="you@company.com" required/></div>
           <div class="fg"><label>Company name *</label><input type="text" name="company" placeholder="Acme Inc." required/></div>
           <div class="fg">
@@ -485,11 +488,10 @@ function toggleFaq(btn){btn.parentElement.classList.toggle('open')}
 const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:0.07,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.rv,.rv2').forEach(el=>obs.observe(el));
 
-const _e='achahboune'+'@'+'gmail'+'.'+'com';
-const _u='/api/contact';
+const _u='https://api.web3forms.com/submit';
 
 const fe=document.getElementById('footerEmail');
-if(fe){fe.href='mailto:'+_e;fe.textContent=_e;}
+if(fe){fe.href='mailto:achahboune@gmail.com';fe.textContent='achahboune@gmail.com';}
 
 const navLogo=document.querySelector('nav .logo img');
 const footLogo=document.getElementById('footerLogo');
@@ -578,41 +580,28 @@ if(navLogo&&footLogo)footLogo.src=navLogo.src;
   requestAnimationFrame(draw);
 })();
 
-async function handleSubmit(e){
+function handleSubmit(e){
   e.preventDefault();
-  const form=document.getElementById('mainForm');
   const btn=document.getElementById('submitBtn');
   btn.textContent='Sending…';
   btn.disabled=true;
-
-  const formData=new FormData(form);
-  const payload=Object.fromEntries(formData.entries());
-
-  try{
-    const res=await fetch(_u,{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Accept':'application/json'
-      },
-      body:JSON.stringify(payload)
-    });
-
-    const data=await res.json();
-
-    if(res.ok && data.success){
-      form.style.display='none';
+  const data=new FormData(document.getElementById('mainForm'));
+  fetch(_u,{method:'POST',headers:{'Accept':'application/json'},body:data})
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.success==='true'||d.success===true){
+      document.getElementById('mainForm').style.display='none';
       document.getElementById('formNote').style.display='none';
       document.getElementById('fSuccess').style.display='block';
-      return;
+    } else {
+      btn.textContent='Error — try emailing us directly';
+      btn.disabled=false;
     }
-
-    throw new Error(data.error||'Request failed');
-  }catch(err){
-    console.error(err);
-    btn.textContent='Error — try again';
+  })
+  .catch(()=>{
+    btn.textContent='Error — try emailing us directly';
     btn.disabled=false;
-  }
+  });
 }
 </script>
 </body>
