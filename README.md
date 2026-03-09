@@ -1,1 +1,610 @@
-"# aegiscloud" 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AegisCloud — Compliance-Ready Cloud Development Environments</title>
+<link rel="dns-prefetch" href="https://fonts.googleapis.com"/>
+<link rel="dns-prefetch" href="https://fonts.gstatic.com"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Outfit:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#080E1C;--bg2:#0B1120;--card:#0D1629;--card2:#101D35;
+  --border:#1A2740;--border2:#243450;
+  --white:#FFFFFF;--muted:#8A9DC0;--dim:#445570;
+  --blue:#2F6BFF;--blue2:#1A59F0;--cyan:#50B4FF;
+  --green:#1FC974;--red:#F04E4E;
+  --f1:'Bricolage Grotesque',sans-serif;
+  --f2:'Outfit',sans-serif;
+  --f3:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:var(--f2);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--f1);line-height:1.12;letter-spacing:-0.025em}
+a{color:inherit;text-decoration:none}
+
+.wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+.sec,.sec-sm{content-visibility:auto}
+.sec{padding:72px 0;contain-intrinsic-size:0 600px}
+.sec-sm{padding:48px 0;contain-intrinsic-size:0 400px}
+
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:var(--f3);font-size:0.65rem;font-weight:500;letter-spacing:0.13em;text-transform:uppercase;color:var(--cyan);background:rgba(80,180,255,0.06);border:1px solid rgba(80,180,255,0.18);padding:5px 12px;border-radius:4px;margin-bottom:18px}
+.eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--f2);font-weight:600;font-size:0.93rem;padding:11px 22px;border-radius:6px;border:none;cursor:pointer;transition:all 0.18s ease;white-space:nowrap}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(47,107,255,0.3)}
+.btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+.btn-outline:hover{color:#fff;border-color:var(--blue);background:rgba(47,107,255,0.05)}
+.btn-lg{padding:13px 30px;font-size:1rem}
+
+/* ── PREMIUM BACKGROUND SYSTEM ── */
+
+body{
+  background-color:var(--bg);
+  background-image:radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size:24px 24px;
+  background-attachment:fixed;
+}
+
+.bg-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;will-change:transform;contain:strict;transform:translateZ(0)}
+
+.bg-orb-1{
+  width:900px;height:900px;top:-280px;left:-220px;
+  background:radial-gradient(circle,rgba(47,107,255,0.22) 0%,rgba(47,107,255,0.08) 40%,transparent 70%);
+  filter:blur(22px);
+  animation:orb1 16s ease-in-out infinite alternate;
+}
+@keyframes orb1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(80px,100px) scale(1.12)}}
+
+.bg-orb-2{
+  width:800px;height:800px;bottom:-180px;right:-180px;
+  background:radial-gradient(circle,rgba(80,180,255,0.2) 0%,rgba(47,107,255,0.07) 45%,transparent 70%);
+  filter:blur(24px);
+  animation:orb2 20s ease-in-out infinite alternate;
+}
+@keyframes orb2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-60px,-80px) scale(1.1)}}
+
+.bg-orb-3{
+  width:600px;height:600px;top:35%;left:50%;
+  background:radial-gradient(circle,rgba(47,107,255,0.12) 0%,transparent 65%);
+  filter:blur(32px);
+  animation:orb3 24s ease-in-out infinite alternate;
+}
+@keyframes orb3{0%{transform:translate(0,0)}100%{transform:translate(-50px,60px)}}
+
+.bg-orb-4{
+  width:550px;height:550px;top:-80px;right:-80px;
+  background:radial-gradient(circle,rgba(80,180,255,0.13) 0%,transparent 65%);
+  filter:blur(30px);
+  animation:orb4 19s ease-in-out infinite alternate;
+}
+@keyframes orb4{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-40px,50px) scale(1.08)}}
+
+.bg-streak{
+  position:fixed;top:0;left:0;right:0;height:1px;z-index:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(80,180,255,0.4) 30%,rgba(47,107,255,0.6) 50%,rgba(80,180,255,0.4) 70%,transparent);
+}
+
+.bg-vignette{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 85% 85% at 50% 50%,transparent 35%,rgba(5,9,18,0.6) 100%);
+}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(8,14,28,0.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:60px}
+.nav-inner{max-width:1060px;margin:0 auto;padding:0 28px;height:100%;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:9px}
+.logo img{width:30px;height:30px;border-radius:7px;object-fit:cover}
+.logo-name{font-family:var(--f1);font-weight:700;font-size:1rem;letter-spacing:-0.02em;color:#fff}
+.nav-r{display:flex;align-items:center;gap:14px}
+.nav-link{font-size:0.88rem;font-weight:500;color:var(--muted);transition:color 0.15s}
+.nav-link:hover{color:#fff}
+
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 900px 600px at 50% 35%,rgba(47,107,255,0.08) 0%,transparent 65%),radial-gradient(ellipse 400px 300px at 25% 65%,rgba(80,180,255,0.04) 0%,transparent 60%)}
+.hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);background-size:52px 52px;mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,black 0%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,black 0%,transparent 100%)}
+.hero-c{position:relative;z-index:1;max-width:840px;padding:0 20px}
+.hero-c h1{font-size:clamp(2.5rem,5.5vw,4rem);font-weight:800;color:#fff;margin-bottom:22px}
+.hero-c h1 .hl{background:linear-gradient(135deg,#fff 20%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.07rem;color:var(--muted);max-width:600px;margin:0 auto 34px;line-height:1.72}
+.hero-ctas{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.hero-note{margin-top:16px;font-size:0.77rem;color:var(--dim);letter-spacing:0.03em}
+.hero-note span{color:var(--border2);margin:0 6px}
+
+.div{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+.sh{font-size:clamp(1.7rem,3.2vw,2.3rem);font-weight:800;margin-bottom:14px}
+.sp{font-size:0.96rem;color:var(--muted);max-width:540px;margin-bottom:44px;line-height:1.7}
+
+.g2,.g3{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+
+.pc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:22px;transition:border-color 0.22s,background 0.22s,box-shadow 0.22s,transform 0.22s;position:relative;overflow:hidden;contain:layout style}
+.pc::after,.step::after,.plc::after,.wc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(80,180,255,0.55),transparent);opacity:0;transition:opacity 0.22s}
+.pc:hover{border-color:rgba(80,180,255,0.35);background:var(--card2);box-shadow:0 8px 32px rgba(47,107,255,0.12);transform:translateY(-2px)}
+.pc:hover::after{opacity:1}
+.pc:hover .pc-ico{background:rgba(47,107,255,0.18)}
+.pc-ico{width:36px;height:36px;border-radius:8px;background:rgba(47,107,255,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:13px;color:var(--cyan)}
+.plc-ico,.wc-ico{color:var(--cyan);margin-bottom:13px}
+.pc h4,.step h3,.plc h4,.wc h4{font-size:0.96rem;font-weight:700;margin-bottom:7px}
+.pc p,.step p,.plc p,.wc p{font-size:0.86rem;color:var(--muted);line-height:1.6}
+
+#ba{background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%)}
+.ba-g{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ba{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:28px;border-top:2px solid transparent;transition:background 0.22s,border-color 0.22s,box-shadow 0.22s;position:relative;overflow:hidden}
+.ba::after{content:'';position:absolute;inset:0;background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%),rgba(80,180,255,0.04),transparent 60%);opacity:0;transition:opacity 0.3s;pointer-events:none}
+.ba:hover{background:var(--card2);box-shadow:0 0 0 1px rgba(80,180,255,0.15),0 8px 32px rgba(47,107,255,0.08)}
+.ba:hover::after{opacity:1}
+.ba.bad{border-top-color:var(--red)}
+.ba.good{border-top-color:var(--blue)}
+.ba-tag{font-family:var(--f3);font-size:0.61rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px}
+.ba.bad .ba-tag{color:var(--red)}
+.ba.good .ba-tag{color:var(--cyan)}
+.ba h3{font-size:1.03rem;font-weight:700;margin-bottom:17px}
+.ba ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.ba ul li{display:flex;gap:10px;font-size:0.87rem;color:var(--muted);align-items:flex-start}
+.mk{flex-shrink:0;font-weight:700;font-size:0.8rem;margin-top:3px}
+.bad .mk{color:var(--red)}
+.good .mk{color:var(--green)}
+
+.step,.plc,.wc{border:1px solid var(--border);position:relative;overflow:hidden;transition:border-color 0.22s,background 0.22s,box-shadow 0.22s,transform 0.22s;contain:layout style}
+.step{background:var(--card);border-radius:10px;padding:28px 26px}
+
+.step:hover,.plc:hover,.wc:hover{border-color:rgba(47,107,255,0.35);background:var(--card2);box-shadow:0 8px 32px rgba(47,107,255,0.1);transform:translateY(-2px)}
+.step:hover::after,.plc:hover::after,.wc:hover::after{opacity:1}
+.step-bg{position:absolute;top:10px;right:14px;font-family:var(--f1);font-size:5.5rem;font-weight:800;color:rgba(47,107,255,0.055);line-height:1;pointer-events:none;user-select:none}
+.step-badge{width:30px;height:30px;border-radius:7px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--f3);font-size:0.72rem;font-weight:500;color:#fff;margin-bottom:13px}
+
+#pilot{background:var(--bg2)}
+.plc{background:var(--bg);border-radius:8px;padding:24px}
+
+.wc{background:var(--card);border-radius:8px;padding:24px}
+
+.callout{background:rgba(47,107,255,0.05);border:1px solid rgba(47,107,255,0.16);border-radius:8px;padding:24px 30px;text-align:center;margin-top:14px;transition:background 0.22s,border-color 0.22s,box-shadow 0.22s}
+.callout:hover{background:rgba(47,107,255,0.09);border-color:rgba(47,107,255,0.35);box-shadow:0 8px 32px rgba(47,107,255,0.12)}
+.callout strong{font-family:var(--f1);font-size:1.03rem;font-weight:700;display:block;margin-bottom:7px}
+.callout p{font-size:0.88rem;color:var(--muted)}
+
+#badges{background:var(--bg2)}
+.badge-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.badge{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 15px;font-size:0.82rem;font-weight:600;color:var(--white);transition:border-color 0.18s,background 0.18s,box-shadow 0.18s,transform 0.18s}
+.badge:hover{border-color:rgba(80,180,255,0.45);background:var(--card2);box-shadow:0 0 12px rgba(80,180,255,0.12),0 4px 16px rgba(47,107,255,0.1);transform:translateY(-1px);color:#fff}
+.badge:hover svg{color:#fff}
+.badge svg{color:var(--cyan);flex-shrink:0}
+
+.hi{display:flex;gap:16px;padding:20px 16px;border-bottom:1px solid var(--border);border-radius:6px;margin:0 -16px;transition:background 0.2s}
+.hi:last-child{border-bottom:none}
+.hi:hover{background:rgba(47,107,255,0.04)}
+.h-dash{color:var(--cyan);font-weight:700;font-size:1.05rem;flex-shrink:0;padding-top:2px;font-family:var(--f3)}
+.hi strong{display:block;font-weight:600;margin-bottom:4px;font-size:0.95rem}
+.hi p{font-size:0.87rem;color:var(--muted);line-height:1.65}
+
+#faq{background:var(--bg2)}
+.faq-wrap{max-width:720px}
+.fi{border-bottom:1px solid var(--border);border-radius:6px;transition:background 0.2s;padding:0 10px;margin:0 -10px}
+.fi:hover{background:rgba(47,107,255,0.04)}
+.fb{width:100%;background:none;border:none;color:#fff;font-family:var(--f2);font-size:0.95rem;font-weight:600;text-align:left;padding:19px 0;display:flex;justify-content:space-between;align-items:center;gap:16px;cursor:pointer;transition:color 0.15s}
+.fb:hover{color:var(--cyan)}
+.fic{flex-shrink:0;color:var(--cyan);font-size:1.1rem;font-family:var(--f3);transition:transform 0.25s}
+.fa{display:none;font-size:0.89rem;color:var(--muted);line-height:1.7;padding-bottom:17px}
+.fi.open .fa{display:block}
+.fi.open .fic{transform:rotate(45deg)}
+
+#cta{background:var(--bg)}
+.cta-c{max-width:520px;margin:0 auto;text-align:center}
+.cta-c h2{font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:800;margin-bottom:13px}
+.cta-c>p{font-size:0.96rem;color:var(--muted);margin-bottom:32px}
+.fcard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:30px;text-align:left;box-shadow:0 24px 80px rgba(0,0,0,0.45);transition:border-color 0.25s,box-shadow 0.25s}
+.fcard:hover{border-color:rgba(47,107,255,0.25);box-shadow:0 24px 80px rgba(0,0,0,0.45),0 0 0 1px rgba(47,107,255,0.1),0 0 60px rgba(47,107,255,0.07)}
+.fg{margin-bottom:15px}
+.fg label{display:block;font-size:0.82rem;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:0.01em}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:#fff;font-family:var(--f2);font-size:0.91rem;padding:10px 13px;outline:none;transition:border-color 0.18s,box-shadow 0.18s;appearance:none}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--dim)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,107,255,0.1)}
+.fg select{cursor:pointer}
+.fg select option{background:var(--card2)}
+.fg textarea{resize:vertical;min-height:80px}
+.fsub{width:100%;background:var(--blue);color:#fff;font-family:var(--f2);font-weight:700;font-size:1rem;padding:13px;border-radius:6px;border:none;cursor:pointer;transition:background 0.18s,transform 0.15s,box-shadow 0.18s;margin-top:4px}
+.fsub:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 8px 28px rgba(47,107,255,0.3)}
+.fsub:disabled{opacity:0.55;cursor:not-allowed;transform:none;box-shadow:none}
+.fnote{text-align:center;font-size:0.75rem;color:var(--dim);margin-top:12px}
+.fsuccess{display:none;text-align:center;padding:36px 20px}
+.fsuccess .ck{width:50px;height:50px;border-radius:50%;background:rgba(31,201,116,0.1);border:1px solid rgba(31,201,116,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:var(--green);font-size:1.2rem}
+.fsuccess h3{font-size:1.15rem;font-weight:700;margin-bottom:7px}
+.fsuccess p{font-size:0.88rem;color:var(--muted)}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 0}
+.fi2{max-width:1060px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.fr{display:flex;align-items:center;gap:16px;font-size:0.79rem;color:var(--dim)}
+.fr a:hover{color:#fff}
+
+.rv,.rv2{opacity:0;transform:translateY(16px)}
+.rv{transition:opacity 0.5s ease,transform 0.5s ease}
+.rv2{transition:opacity 0.5s ease 0.08s,transform 0.5s ease 0.08s}
+.rv.in,.rv2.in{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){.g2,.g3,.ba-g{grid-template-columns:1fr}.sec,.sec-sm{padding:48px 0}.hero-c h1{font-size:2rem}.nav-link{display:none}.fi2{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+<div class="bg-orb bg-orb-4"></div>
+<div class="bg-streak"></div>
+<div class="bg-vignette"></div>
+<canvas id="bgc" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <img src="data:image/jpeg;base64,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" alt="AegisCloud"/>
+      <span class="logo-name">aegiscloud</span>
+    </div>
+    <div class="nav-r">
+      <a href="#" class="nav-link">Sign In</a>
+      <a href="#cta" class="btn btn-blue" style="padding:9px 18px;font-size:0.86rem;">Request Security Pack</a>
+    </div>
+  </div>
+</nav>
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-c rv">
+    <div class="eyebrow">Compliance-Ready Cloud Environments</div>
+    <h1>Your developers are blocked<br/>by compliance. <span class="hl">We unblock<br/>them in 24 hours.</span></h1>
+    <p class="hero-sub">AegisCloud gives regulated SaaS teams — those selling to banks, hospitals, and governments — secure, auditable cloud development environments that satisfy enterprise security reviews.</p>
+    <div class="hero-ctas">
+      <a href="#cta" class="btn btn-blue btn-lg">Request Security Pack <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a href="#how" class="btn btn-outline btn-lg">See how it works</a>
+    </div>
+    <p class="hero-note">No sales call required <span>·</span> Async-first <span>·</span> Founder responds within 24 hours</p>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec" id="pain">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">The Real Cost</div>
+      <h2 class="sh">Enterprise deals slip when your dev<br/>environment fails the security review.</h2>
+    </div>
+    <div class="g2 rv2">
+      <div class="pc"><div class="pc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div><h4>Security teams ban Codespaces and Gitpod</h4><p>Developers fall back to personal laptops that nobody audits, controls, or can produce evidence for.</p></div>
+      <div class="pc"><div class="pc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h4>Laptops become the compliance liability</h4><p>Secrets and source code live on unmanaged machines that fail security reviews before they even start.</p></div>
+      <div class="pc"><div class="pc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><h4>Audits turn into fire drills</h4><p>Collecting access evidence — who had what, when, from where — takes weeks and stalls deals mid-cycle.</p></div>
+      <div class="pc"><div class="pc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><h4>Onboarding drags for days</h4><p>No automated provisioning means new engineers wait 2–3 days just to write their first line of code.</p></div>
+      <div class="pc"><div class="pc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><circle cx="12" cy="14" r="2"/></svg></div><h4>Security questionnaires expose gaps</h4><p>"How do you control developer access to secrets?" is painful when the honest answer is unclear.</p></div>
+      <div class="pc"><div class="pc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><h4>Six-figure deals die at the review stage</h4><p>One honest answer about missing audit logs can lose a contract that took months to reach procurement.</p></div>
+    </div>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec" id="ba">
+  <div class="wrap">
+    <div class="rv" style="text-align:center;margin-bottom:40px;">
+      <div class="eyebrow">Before and After</div>
+      <h2 class="sh">From scattered laptops to a centrally<br/>controlled, auditable environment.</h2>
+    </div>
+    <div class="ba-g rv2">
+      <div class="ba bad">
+        <div class="ba-tag">Before · Without AegisCloud</div>
+        <h3>Unmanaged Dev Environments</h3>
+        <ul>
+          <li><span class="mk">✕</span>Personal laptops, no central policy or visibility</li>
+          <li><span class="mk">✕</span>Secrets in .env files, rotated never or rarely</li>
+          <li><span class="mk">✕</span>No audit trail — can't answer "who accessed what in Q3?"</li>
+          <li><span class="mk">✕</span>Shadow tools, no approved tooling enforcement</li>
+          <li><span class="mk">✕</span>2–3 day environment setup per new hire</li>
+          <li><span class="mk">✕</span>Customer reviews expose your entire dev workflow</li>
+        </ul>
+      </div>
+      <div class="ba good">
+        <div class="ba-tag">After · With AegisCloud</div>
+        <h3>Controlled, Compliant Workspaces</h3>
+        <ul>
+          <li><span class="mk">✓</span>Cloud workspaces provisioned from policy-locked templates</li>
+          <li><span class="mk">✓</span>Runtime secrets injection — nothing touches dev machines</li>
+          <li><span class="mk">✓</span>Full exportable audit log: every session, every access event</li>
+          <li><span class="mk">✓</span>Policy-enforced tooling at the infrastructure level</li>
+          <li><span class="mk">✓</span>New engineer productive in under 2 hours</li>
+          <li><span class="mk">✓</span>Security Pack ready to share with customers on demand</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="rv" style="text-align:center;margin-bottom:40px;">
+      <div class="eyebrow">How It Works</div>
+      <h2 class="sh">Three steps to audit-ready.</h2>
+    </div>
+    <div class="g3 rv2">
+      <div class="step"><div class="step-bg">01</div><div class="step-badge">01</div><h3>Connect your identity provider</h3><p>Link Okta, Azure AD, Google Workspace, or any SAML 2.0 / OIDC provider. RBAC and access policies enforced from day one — setup takes under an hour.</p></div>
+      <div class="step"><div class="step-bg">02</div><div class="step-badge">02</div><h3>Deploy compliant workspace templates</h3><p>Policy-locked environments matched to SOC 2, HIPAA, or FedRAMP. Region lock, egress controls, and auto-expiry are set by policy, not individual developers.</p></div>
+      <div class="step"><div class="step-bg">03</div><div class="step-badge">03</div><h3>Export your Security Pack</h3><p>Generate a full evidence export: access logs, policy snapshots, session metadata — formatted for customer security reviews and auditors. You own it entirely.</p></div>
+    </div>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec" id="pilot">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">Pilot Scope</div>
+      <h2 class="sh">What's included in the pilot.</h2>
+      <p class="sp">A structured, founder-led engagement designed to get you audit-ready fast. Not a free trial — a real scoped engagement with clear deliverables.</p>
+    </div>
+    <div class="g2 rv2">
+      <div class="plc"><div class="plc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h4>1–2 Workspace Templates</h4><p>Pre-configured cloud dev environments matched to your stack and compliance target, policy-locked from day one.</p></div>
+      <div class="plc"><div class="plc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Policy & Access Setup</h4><p>SSO/SAML integration, RBAC, egress controls, region lock, and workspace auto-expiry tuned to your environment.</p></div>
+      <div class="plc"><div class="plc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h4>Security Pack Export</h4><p>A complete, exportable audit package formatted for customer reviews, SOC 2 auditors, and HIPAA assessments.</p></div>
+      <div class="plc"><div class="plc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><h4>Founder-Led Support</h4><p>Direct access to the founding team. No account manager, no support queue, no ticket system.</p></div>
+    </div>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec" id="who">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">Who It's For</div>
+      <h2 class="sh">Built for SaaS companies blocked by<br/>their customers' security requirements.</h2>
+    </div>
+    <div class="g2 rv2">
+      <div class="wc"><div class="wc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg></div><h4>Fintech & Financial Services SaaS</h4><p>Selling to banks and insurance companies whose InfoSec teams audit your entire SDLC before signing.</p></div>
+      <div class="wc"><div class="wc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h4>Healthcare & Life Sciences SaaS</h4><p>HIPAA obligations extend into your dev environment. Business Associate Agreements alone are not enough.</p></div>
+      <div class="wc"><div class="wc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><polygon points="3 9 12 2 21 9 21 20 3 20"/><rect x="9" y="14" width="6" height="6"/></svg></div><h4>Government & Public Sector Contractors</h4><p>FedRAMP, CMMC, or StateRAMP paths require controlled, auditable dev environments — not something to defer.</p></div>
+      <div class="wc"><div class="wc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div><h4>Enterprise SaaS with Security Reviews</h4><p>If you've lost or delayed a deal because you couldn't answer a security questionnaire confidently, this is you.</p></div>
+    </div>
+    <div class="callout rv">
+      <strong>"This is not for the bank or hospital. It's for the SaaS company that sells to them."</strong>
+      <p>AegisCloud is for the company that must satisfy those buyers' security requirements in order to close the deal.</p>
+    </div>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec-sm" id="badges">
+  <div class="wrap">
+    <div class="rv" style="text-align:center;margin-bottom:26px;"><div class="eyebrow">Security Controls</div></div>
+    <div class="badge-row rv2">
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>SOC 2 Ready</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>HIPAA Aligned</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>FedRAMP Path</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>SSO / SAML</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>RBAC Enforced</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>Audit Logs</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>VPC Isolation</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20"/></svg>Region Lock</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Egress Controls</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auto-Expiring Workspaces</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>Runtime Secrets</div>
+      <div class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Evidence Export</div>
+    </div>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec" id="honest">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">Honest Scope</div>
+      <h2 class="sh" style="max-width:500px;">What AegisCloud does not do.</h2>
+      <p style="color:var(--muted);font-size:0.91rem;margin-bottom:28px;">Technical buyers deserve honesty, not sales theater.</p>
+    </div>
+    <div style="max-width:680px" class="rv2">
+      <div class="hi"><span class="h-dash">—</span><div><strong>Does not replace your production infrastructure.</strong><p>AegisCloud controls development environments only. Your Kubernetes clusters, databases, and cloud accounts are entirely out of scope unless you explicitly connect them for secrets access.</p></div></div>
+      <div class="hi"><span class="h-dash">—</span><div><strong>Does not certify your company.</strong><p>Compliance certification requires process, legal, and organizational work that no tool can shortcut. We give you the evidence and controls — you still do the work with your auditors.</p></div></div>
+      <div class="hi"><span class="h-dash">—</span><div><strong>Does not oversell or overpromise.</strong><p>If your requirements are unusual or we're not the right fit, we'll tell you directly in the first conversation rather than sell you a pilot that won't deliver.</p></div></div>
+    </div>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">FAQ</div>
+      <h2 class="sh" style="margin-bottom:32px;">Common questions from technical buyers.</h2>
+    </div>
+    <div class="faq-wrap rv2">
+      <div class="fi open"><button class="fb" onclick="toggleFaq(this)">Does this replace our production infrastructure?<span class="fic">+</span></button><div class="fa">No. AegisCloud manages cloud development environments only — the machines your engineers write and test code on. It has no footprint in your production VPCs, databases, or deployments unless you explicitly connect them.</div></div>
+      <div class="fi"><button class="fb" onclick="toggleFaq(this)">Does it work with our existing identity provider?<span class="fic">+</span></button><div class="fa">Yes. AegisCloud integrates with Okta, Azure Active Directory, Google Workspace, and any SAML 2.0 or OIDC-compliant provider. Setup typically takes under an hour from start to finish.</div></div>
+      <div class="fi"><button class="fb" onclick="toggleFaq(this)">Can we use the audit logs in customer security reviews?<span class="fic">+</span></button><div class="fa">Yes — that is the primary use case. The Security Pack is formatted for enterprise security questionnaires, SOC 2 auditor requests, and HIPAA risk assessments. You own the export and can share it directly with customer security teams.</div></div>
+      <div class="fi"><button class="fb" onclick="toggleFaq(this)">What if our compliance requirements are unusual?<span class="fic">+</span></button><div class="fa">Tell us. We'll respond honestly about whether AegisCloud is the right fit before any commitment. We would rather decline a misfit engagement than waste your time with a pilot that won't solve your problem.</div></div>
+      <div class="fi"><button class="fb" onclick="toggleFaq(this)">What does the pilot commitment look like?<span class="fic">+</span></button><div class="fa">The pilot is a structured, time-boxed engagement — typically 2–4 weeks — with a clear scope: workspace templates deployed, policies configured, Security Pack generated. No open-ended contracts.</div></div>
+    </div>
+  </div>
+</section>
+<div class="div"></div>
+<section class="sec" id="cta">
+  <div class="wrap">
+    <div class="cta-c rv">
+      <div class="eyebrow">Get Started</div>
+      <h2>Get audit-ready in 24 hours.</h2>
+      <p>A founder responds within one business day.<br/>No sales call required unless you want one.</p>
+      <div class="fcard">
+<div class="fsuccess" id="fSuccess">
+          <div class="ck">✓</div>
+          <h3>Request received.</h3>
+          <p>The founding team will respond within one business day.</p>
+        </div>
+<form
+          id="mainForm"
+          method="POST"
+          onsubmit="handleSubmit(event)"
+        >
+<input type="hidden" name="access_key" value="adf0554d-1220-4aeb-a3d0-e67945f6afe4"/>
+          <input type="hidden" name="subject" value="AegisCloud — New Security Pack Request"/>
+          <input type="hidden" name="from_name" value="AegisCloud Website"/>
+<div class="fg"><label>Work email *</label><input type="email" name="email" placeholder="you@company.com" required/></div>
+          <div class="fg"><label>Company name *</label><input type="text" name="company" placeholder="Acme Inc." required/></div>
+          <div class="fg">
+            <label>Primary compliance target *</label>
+            <select name="compliance" required>
+              <option value="" disabled selected>Select one</option>
+              <option>SOC 2</option>
+              <option>HIPAA</option>
+              <option>FedRAMP</option>
+              <option>CMMC</option>
+              <option>Multiple / Not sure yet</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Engineering team size *</label>
+            <select name="teamsize" required>
+              <option value="" disabled selected>Select one</option>
+              <option>1–10</option>
+              <option>11–50</option>
+              <option>51–200</option>
+              <option>200+</option>
+            </select>
+          </div>
+          <div class="fg"><label>What's blocking you right now? <span style="color:var(--dim);font-weight:400">(optional)</span></label><textarea name="message" placeholder="Describe the specific audit, customer review, or dev environment problem you're facing."></textarea></div>
+          <button type="submit" class="fsub" id="submitBtn">Request Security Pack →</button>
+        </form>
+<p class="fnote" id="formNote">Goes directly to the AegisCloud founding team · Never shared or sold</p>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="fi2">
+    <div class="logo">
+      <img id="footerLogo" alt="AegisCloud" style="width:26px;height:26px;border-radius:6px;object-fit:cover"/>
+      <span class="logo-name" style="font-size:0.91rem">aegiscloud</span>
+    </div>
+    <div class="fr">
+      <span>© 2026 AegisCloud · Built for regulated engineering teams</span>
+      <a href="#">Privacy Policy</a>
+      <a href="#" id="footerEmail"><!--email--></a>
+    </div>
+  </div>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
+function toggleFaq(btn){btn.parentElement.classList.toggle('open')}
+
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:0.07,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv,.rv2').forEach(el=>obs.observe(el));
+
+const _u='https://api.web3forms.com/submit';
+
+const fe=document.getElementById('footerEmail');
+if(fe){fe.href='mailto:achahboune@gmail.com';fe.textContent='achahboune@gmail.com';}
+
+const navLogo=document.querySelector('nav .logo img');
+const footLogo=document.getElementById('footerLogo');
+if(navLogo&&footLogo)footLogo.src=navLogo.src;
+
+(function(){
+  const c=document.getElementById('bgc');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  let W,H;
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',resize,{passive:true});
+
+  const N=35;
+  const pts=[];
+  for(let i=0;i<N;i++){
+    pts.push({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight,
+      vx:(Math.random()-0.5)*0.45,
+      vy:(Math.random()-0.5)*0.45,
+      r:Math.random()*1.8+0.7,
+      t:Math.random()*6.28
+    });
+  }
+
+  let scanY=0;
+  let last=0;
+  const INTERVAL=1000/30;
+  const CONN_SQ=160*160;
+
+  function draw(ts){
+    requestAnimationFrame(draw);
+    if(ts-last<INTERVAL)return;
+    last=ts;
+    ctx.clearRect(0,0,W,H);
+
+    scanY=(scanY+1.4)%(H+120);
+    const sg=ctx.createLinearGradient(0,scanY-60,0,scanY+60);
+    sg.addColorStop(0,'transparent');
+    sg.addColorStop(0.5,'rgba(80,180,255,0.03)');
+    sg.addColorStop(1,'transparent');
+    ctx.fillStyle=sg;
+    ctx.fillRect(0,scanY-60,W,120);
+
+    for(let i=0;i<N;i++){
+      const p=pts[i];
+      p.x+=p.vx; p.y+=p.vy; p.t+=0.012;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+    }
+
+    for(let i=0;i<N;i++){
+      for(let j=i+1;j<N;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d2=dx*dx+dy*dy;
+        if(d2<CONN_SQ){
+          const alpha=0.18*(1-d2/CONN_SQ);
+          ctx.beginPath();
+          ctx.strokeStyle='rgba(47,107,255,'+alpha+')';
+          ctx.lineWidth=0.8;
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    for(let i=0;i<N;i++){
+      const p=pts[i];
+      const a=0.45+0.3*Math.sin(p.t);
+      const col=i%3===0?'80,180,255':'47,107,255';
+
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r*2.5,0,6.28);
+      ctx.fillStyle='rgba('+col+',0.06)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,6.28);
+      ctx.fillStyle='rgba('+col+','+a+')';
+      ctx.fill();
+    }
+  }
+  requestAnimationFrame(draw);
+})();
+
+function handleSubmit(e){
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  btn.textContent='Sending…';
+  btn.disabled=true;
+  const data=new FormData(document.getElementById('mainForm'));
+  fetch(_u,{method:'POST',headers:{'Accept':'application/json'},body:data})
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.success==='true'||d.success===true){
+      document.getElementById('mainForm').style.display='none';
+      document.getElementById('formNote').style.display='none';
+      document.getElementById('fSuccess').style.display='block';
+    } else {
+      btn.textContent='Error — try emailing us directly';
+      btn.disabled=false;
+    }
+  })
+  .catch(()=>{
+    btn.textContent='Error — try emailing us directly';
+    btn.disabled=false;
+  });
+}
+</script>
+</body>
+</html>
+[aegiscloud the most recent.html](https://github.com/user-attachments/files/25851311/aegiscloud.the.most.recent.html)
+
